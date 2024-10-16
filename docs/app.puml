@@ -1,0 +1,47 @@
+@startuml
+package "Entities" {
+
+    ' -- MappedSuperclass for common properties --
+    abstract class BaseEntity {
+        + Long id
+        + Date createdAt
+        + Date updatedAt
+    }
+
+    ' -- Concrete Entity --
+    Entity  User {
+        + Email email
+        + String name
+        + Role role
+        + Address address
+    }
+
+    ' User inherits common fields from BaseEntity
+    BaseEntity <|-- User
+
+    ' -- Rich Type for Email --
+    class Email <<(R,#229988)Embeddable>> {
+        + String value
+    }
+
+    ' -- Value Object Address --
+    class Address <<(V,#229988)Embeddable>> {
+        + String street
+        + String city
+        + String zipCode
+    }
+
+    ' -- Enum Role --
+    enum Role {
+        ADMIN
+        USER
+        GUEST
+    }
+
+    ' Relations
+    User --> Email : has
+    User --> Role : has
+    User --> Address : lives at
+}
+
+@enduml
