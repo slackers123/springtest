@@ -13,10 +13,10 @@ import lombok.NoArgsConstructor;
 @Builder
 public class User extends BaseEntity {
     @Embedded
-    Email email;
-    String name;
+    public Email email;
+    public String name;
     @Enumerated(EnumType.STRING)
-    Role role;
+    public Role role;
     @Embedded
-    Address address;
+    public Address address;
 }
