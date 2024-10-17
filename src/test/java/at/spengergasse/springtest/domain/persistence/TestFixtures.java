@@ -1,9 +1,8 @@
 package at.spengergasse.springtest.domain.persistence;
 
-import at.spengergasse.springtest.domain.Address;
-import at.spengergasse.springtest.domain.Email;
-import at.spengergasse.springtest.domain.Role;
-import at.spengergasse.springtest.domain.User;
+import at.spengergasse.springtest.domain.*;
+
+import java.time.LocalDateTime;
 
 public class TestFixtures {
     public static User severinUser() {
@@ -12,6 +11,8 @@ public class TestFixtures {
                 .role(Role.ADMIN)
                 .email(new Email("severin.gebesmair@gmail.com"))
                 .address(new Address("Spengergasse", "wien", "1050"))
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .build();
     }
 
@@ -21,6 +22,8 @@ public class TestFixtures {
                 .role(Role.USER)
                 .email(new Email("maxim.heller@gmail.com"))
                 .address(new Address("Bahnhofstraße", "wien", "1010"))
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .build();
     }
 
@@ -30,6 +33,8 @@ public class TestFixtures {
                 .role(Role.GUEST)
                 .email(new Email("leo.stanislaus.steiner@gmail.com"))
                 .address(new Address("Karlskirche", "wien", "1040"))
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .build();
     }
 }
