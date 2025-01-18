@@ -1,16 +1,15 @@
 package at.spengergasse.springtest.presentation;
 
+import at.spengergasse.springtest.domain.User;
 import at.spengergasse.springtest.presentation.dto.UserDto;
 import at.spengergasse.springtest.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,6 +35,31 @@ public class UserController {
                 ? ResponseEntity.notFound().build()
                 : ResponseEntity.ok(returnValue);
     }
+
+    @PostMapping("")
+    public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto) {
+        User user = modelMapper.map(userDto, User.class);
+
+        User new_user = service.saveUser(user);
+
+        UserDto returnValue = modelMapper.map(new_user, UserDto.class);
+
+        return (returnValue == null) ? ResponseEntity.notFound().build() : ResponseEntity.ok(returnValue);
+    }
+
+    @DeleteMapping("{userId}")
+    public ResponseEntity<UserDto> deleteUser(@RequestParam Long userId) {
+        Optional<User> toDelete = service.findUserById(userId);
+
+        if (toDelete.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            User user = toDelete.get();
+            service.deleteUserById(userId);
+            return ResponseEntity.ok(modelMapper.map(user, UserDto.class));
+        }
+    }
+
 
 //    @GetMapping("")
 //    @Secured("ROLE_ADMIN")
