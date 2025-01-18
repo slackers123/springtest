@@ -1,12 +1,15 @@
 package at.spengergasse.springtest.presentation;
 
 import at.spengergasse.springtest.domain.User;
+import at.spengergasse.springtest.presentation.commands.CreateUserCommand;
 import at.spengergasse.springtest.presentation.dto.UserDto;
 import at.spengergasse.springtest.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.LinkRelation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,9 +31,6 @@ public class UserController {
     @GetMapping("")
     public ResponseEntity<List<UserDto>> getAllUsers() {
 
-        //List<UserDto> returnValue = modelMapper.map(service.fetchAll(), new TypeToken<List<UserDto>>() {
-        //}.getType());
-
         List<User> userList = service.fetchAll();
         List<UserDto> userDto = modelMapper.map(userList, new TypeToken<List<UserDto>>(){}.getType());
 
@@ -44,6 +44,7 @@ public class UserController {
         Optional<User> returnValue = service.findUserById(userId);
         if (returnValue.isPresent()) {
             UserDto userDto = modelMapper.map(returnValue.get(), UserDto.class);
+            userDto.add(Link.of("http://localhost:8080/api/user/" + userId, LinkRelation.of("get user")));
             return ResponseEntity.ok(userDto);
         }
         else {
@@ -52,18 +53,19 @@ public class UserController {
     }
 
     @PostMapping("")
-    public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto) {
-        User user = modelMapper.map(userDto, User.class);
+    public ResponseEntity<UserDto> createUser(@RequestBody CreateUserCommand createUserCommand) {
+        System.out.println(createUserCommand.toString());
+        User user = modelMapper.map(createUserCommand, User.class);
 
         User new_user = service.saveUser(user);
 
         UserDto returnValue = modelMapper.map(new_user, UserDto.class);
 
-        return (returnValue == null) ? ResponseEntity.notFound().build() : ResponseEntity.ok(returnValue);
+        return (returnValue == null) ? ResponseEntity.internalServerError().build() : ResponseEntity.ok(returnValue);
     }
 
     @DeleteMapping("{userId}")
-    public ResponseEntity<UserDto> deleteUser(@PathVariable Long userId) {
+    public ResponseEntity<UserDto> deleteUser(@RequestParam Long userId) {
         Optional<User> toDelete = service.findUserById(userId);
 
         if (toDelete.isEmpty()) {

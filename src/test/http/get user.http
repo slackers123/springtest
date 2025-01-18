@@ -1,0 +1,19 @@
+POST http://localhost:8080/api/user
+Content-Type: application/json
+
+{
+  "email":  "testemail@gmail.com",
+  "name": "username",
+  "role": "ADMIN",
+  "address": "Spengergasse"
+}
+
+###
+
+### getting user
+GET http://localhost:8080/api/user/
+
+
+###
+
+
