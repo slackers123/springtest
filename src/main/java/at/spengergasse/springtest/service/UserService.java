@@ -1,7 +1,6 @@
 package at.spengergasse.springtest.service;
 
-import at.spengergasse.springtest.domain.Email;
-import at.spengergasse.springtest.domain.User;
+import at.spengergasse.springtest.domain.*;
 import at.spengergasse.springtest.domain.persistence.UserRepository;
 import jakarta.transaction.TransactionScoped;
 import jakarta.validation.constraints.NotNull;
@@ -18,7 +17,7 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository repository; //final means you cannot modify it after
 
-
+    //
     @Transactional(readOnly = true)
     public List<User> fetchAll() { return repository.findAll(); }
 
