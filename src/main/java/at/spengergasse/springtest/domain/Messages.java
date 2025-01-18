@@ -10,9 +10,9 @@ import lombok.Setter;
 public class Messages {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    Long id;
+    private Long id;
 
-    String message_text;
+    private String message_text;
 
     @ManyToOne(cascade = CascadeType.ALL, optional = false)
     @JoinColumn(name = "user_id", nullable = false)

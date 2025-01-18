@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "app_user")
@@ -40,5 +41,10 @@ public class User {
                 ", role=" + role +
                 ", email=" + email +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof User && Objects.equals(this.id, ((User) o).getId());
     }
 }
