@@ -6,19 +6,14 @@ import at.spengergasse.springtest.presentation.commands.CreateNoseCommand;
 import at.spengergasse.springtest.presentation.dto.NoseDto;
 import at.spengergasse.springtest.service.NoseService;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.hateoas.Link;
-import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.print.attribute.standard.Media;
+
 import java.util.Optional;
 
 import static at.spengergasse.springtest.presentation.APIBase.API;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RequiredArgsConstructor
 @RestController
