@@ -1,13 +1,16 @@
 package at.spengergasse.springtest.service;
 
 import at.spengergasse.springtest.domain.*;
+import at.spengergasse.springtest.domain.persistence.NoseRepository;
 import at.spengergasse.springtest.domain.persistence.UserRepository;
+import at.spengergasse.springtest.presentation.commands.CreateUserCommand;
 import jakarta.transaction.TransactionScoped;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,7 +33,15 @@ public class UserService {
     @Transactional(readOnly = true)
     public List<User> findUserByName(String name) { return repository.findByName(name); }
 
-    public User saveUser(User user) {
+    public User createUser(CreateUserCommand cmd) {
+        System.out.println(cmd.toString());
+        User user = User.builder()
+                .email(cmd.email())
+                .name(cmd.name())
+                .role(Role.USER)
+                .address(cmd.address())
+                .build();
+
         return repository.save(user);
     }
 

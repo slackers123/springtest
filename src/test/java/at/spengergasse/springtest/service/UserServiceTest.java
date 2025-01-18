@@ -2,6 +2,8 @@ package at.spengergasse.springtest.service;
 
 import at.spengergasse.springtest.domain.*;
 import at.spengergasse.springtest.domain.persistence.UserRepository;
+import at.spengergasse.springtest.presentation.commands.CreateUserCommand;
+import org.h2.command.ddl.CreateUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,15 +32,16 @@ class UserServiceTest {
     void testSavedUserReturnsSavedUser() {
         User user = User.builder()
                 .name("Maxim")
-                .role(Role.ADMIN)
-                .nose(new Nose())
+                .role(Role.USER)
                 .email(new Email("maxim@gmail.com"))
                 .address(new Address("spengergasse", "wien", "1050"))
                 .build();
 
+        CreateUserCommand cmd = new CreateUserCommand(new Email("maxim@gmail.com"), "Maxim", new Address("spengergasse", "wien", "1050"));
+
         when(userRepository.save(user)).thenReturn(user);
 
-        User new_user = userService.saveUser(user);
+        User new_user = userService.createUser(cmd);
 
         assertNotNull(new_user);
         verify(userRepository,times(1)).save(user);

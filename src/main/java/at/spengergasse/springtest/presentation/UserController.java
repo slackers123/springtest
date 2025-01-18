@@ -1,6 +1,10 @@
 package at.spengergasse.springtest.presentation;
 
+import at.spengergasse.springtest.domain.Address;
+import at.spengergasse.springtest.domain.Email;
+import at.spengergasse.springtest.domain.Role;
 import at.spengergasse.springtest.domain.User;
+import at.spengergasse.springtest.presentation.assemblers.UserModelAssembler;
 import at.spengergasse.springtest.presentation.commands.CreateUserCommand;
 import at.spengergasse.springtest.presentation.dto.UserDto;
 import at.spengergasse.springtest.service.UserService;
@@ -8,6 +12,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.LinkRelation;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +23,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static at.spengergasse.springtest.presentation.APIBase.API;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RequiredArgsConstructor
 @RestController
@@ -25,26 +33,27 @@ public class UserController {
 
     protected static final String BASE_ROUTE = API + "/user";
     private final UserService service;
-    private final ModelMapper modelMapper = new ModelMapper();
 
+    private final UserModelAssembler assembler;
 
     @GetMapping("")
-    public ResponseEntity<List<UserDto>> getAllUsers() {
+    public CollectionModel<UserDto> getAllUsers() {
 
         List<User> userList = service.fetchAll();
-        List<UserDto> userDto = modelMapper.map(userList, new TypeToken<List<UserDto>>(){}.getType());
 
-        return userDto.isEmpty()
-                ? ResponseEntity.notFound().build()
-                : ResponseEntity.ok(userDto);
+        CollectionModel<UserDto> result = assembler.toCollectionModel(userList);
+
+        Link selfLink = linkTo(methodOn(UserController.class).getAllUsers()).withSelfRel();
+        result.add(selfLink);
+
+        return result;
     }
 
     @GetMapping("{userId}")
     public ResponseEntity<UserDto> getUser(@PathVariable Long userId) {
         Optional<User> returnValue = service.findUserById(userId);
         if (returnValue.isPresent()) {
-            UserDto userDto = modelMapper.map(returnValue.get(), UserDto.class);
-            userDto.add(Link.of("http://localhost:8080/api/user/" + userId, LinkRelation.of("get user")));
+            UserDto userDto = assembler.toModel(returnValue.get());
             return ResponseEntity.ok(userDto);
         }
         else {
@@ -53,15 +62,13 @@ public class UserController {
     }
 
     @PostMapping("")
-    public ResponseEntity<UserDto> createUser(@RequestBody CreateUserCommand createUserCommand) {
-        System.out.println(createUserCommand.toString());
-        User user = modelMapper.map(createUserCommand, User.class);
+    public ResponseEntity<UserDto> createUser(@RequestBody @Valid CreateUserCommand cmd) {
+        System.out.println(cmd.address().toString());
+        User new_user = service.createUser(cmd);
 
-        User new_user = service.saveUser(user);
+        System.out.println("new_user: " + new_user);
 
-        UserDto returnValue = modelMapper.map(new_user, UserDto.class);
-
-        return (returnValue == null) ? ResponseEntity.internalServerError().build() : ResponseEntity.ok(returnValue);
+        return ResponseEntity.ok(assembler.toModel(new_user));
     }
 
     @DeleteMapping("{userId}")
@@ -73,7 +80,7 @@ public class UserController {
         } else {
             User user = toDelete.get();
             service.deleteUserById(userId);
-            return ResponseEntity.ok(modelMapper.map(user, UserDto.class));
+            return ResponseEntity.ok(assembler.toModel(user));
         }
     }
 
