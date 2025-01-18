@@ -26,14 +26,29 @@ public class UserController {
 
 
     @GetMapping("")
-    public ResponseEntity<List<UserDto>> getAllChats() {
+    public ResponseEntity<List<UserDto>> getAllUsers() {
 
-        List<UserDto> returnValue = modelMapper.map(service.fetchAll(), new TypeToken<List<UserDto>>() {
-        }.getType());
+        //List<UserDto> returnValue = modelMapper.map(service.fetchAll(), new TypeToken<List<UserDto>>() {
+        //}.getType());
 
-        return returnValue.isEmpty()
+        List<User> userList = service.fetchAll();
+        List<UserDto> userDto = modelMapper.map(userList, new TypeToken<List<UserDto>>(){}.getType());
+
+        return userDto.isEmpty()
                 ? ResponseEntity.notFound().build()
-                : ResponseEntity.ok(returnValue);
+                : ResponseEntity.ok(userDto);
+    }
+
+    @GetMapping("{userId}")
+    public ResponseEntity<UserDto> getUser(@PathVariable Long userId) {
+        Optional<User> returnValue = service.findUserById(userId);
+        if (returnValue.isPresent()) {
+            UserDto userDto = modelMapper.map(returnValue.get(), UserDto.class);
+            return ResponseEntity.ok(userDto);
+        }
+        else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping("")
@@ -48,7 +63,7 @@ public class UserController {
     }
 
     @DeleteMapping("{userId}")
-    public ResponseEntity<UserDto> deleteUser(@RequestParam Long userId) {
+    public ResponseEntity<UserDto> deleteUser(@PathVariable Long userId) {
         Optional<User> toDelete = service.findUserById(userId);
 
         if (toDelete.isEmpty()) {
