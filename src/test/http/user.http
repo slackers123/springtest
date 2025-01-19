@@ -28,4 +28,9 @@ GET http://localhost:8080/api/user/1
 
 ###
 
+### get one user
+DELETE http://localhost:8080/api/user/123123
+
+###
+
 

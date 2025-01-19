@@ -4,12 +4,16 @@ import at.spengergasse.springtest.domain.User;
 import at.spengergasse.springtest.presentation.assemblers.UserModelAssembler;
 import at.spengergasse.springtest.presentation.commands.CreateUserCommand;
 import at.spengergasse.springtest.presentation.dto.UserDto;
+import at.spengergasse.springtest.presentation.exceptions.UserNotFoundError;
+import at.spengergasse.springtest.presentation.exceptions.UserNotFoundException;
 import at.spengergasse.springtest.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -44,15 +48,14 @@ public class UserController {
     @GetMapping("{userId}")
     public ResponseEntity<UserDto> getUser(@PathVariable Long userId) {
         Optional<User> returnValue = service.findUserById(userId);
-        if (returnValue.isPresent()) {
-            UserDto userDto = assembler.toModel(returnValue.get());
-            UserDto dto = new UserDto();
-            dto.add(linkTo(methodOn(UserController.class).getUser(userId)).withSelfRel());
-            return ResponseEntity.ok(userDto);
+        if (returnValue.isEmpty()) {
+            throw new UserNotFoundException(userId);
         }
-        else {
-            return ResponseEntity.notFound().build();
-        }
+
+        UserDto userDto = assembler.toModel(returnValue.get());
+        UserDto dto = new UserDto();
+        dto.add(linkTo(methodOn(UserController.class).getUser(userId)).withSelfRel());
+        return ResponseEntity.ok(userDto);
     }
 
     @PostMapping("")
@@ -64,15 +67,12 @@ public class UserController {
     }
 
     @DeleteMapping("{userId}")
-    public ResponseEntity<UserDto> deleteUser(@PathVariable Long userId) {
+    public void deleteUser(@PathVariable Long userId) {
         Optional<User> toDelete = service.findUserById(userId);
 
-        if (toDelete.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        } else {
-            User user = toDelete.get();
-            service.deleteUserById(userId);
-            return ResponseEntity.ok(assembler.toModel(user));
-        }
+        if (toDelete.isEmpty())
+            throw new UserNotFoundException(userId);
+
+        service.deleteUserById(userId);
     }
 }
