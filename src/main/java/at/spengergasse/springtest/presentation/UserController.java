@@ -1,6 +1,7 @@
 package at.spengergasse.springtest.presentation;
 
 import at.spengergasse.springtest.domain.User;
+import at.spengergasse.springtest.domain.persistence.UserRepository;
 import at.spengergasse.springtest.presentation.dto.UserDto;
 import at.spengergasse.springtest.service.UserService;
 import jakarta.validation.Valid;
@@ -23,6 +24,7 @@ public class UserController {
     protected static final String BASE_ROUTE = API + "/user";
     private final UserService service;
     private final ModelMapper modelMapper = new ModelMapper();
+    private final UserRepository userRepository;
 
 
     @GetMapping("")
@@ -75,6 +77,21 @@ public class UserController {
         }
     }
 
+    @PutMapping("{userId}")
+    public ResponseEntity<UserDto> updateUser(@Valid @RequestBody UserDto userDto, @PathVariable Long userId) {
+        Optional<User> toUpdate = service.findUserById(userId);
+        if (toUpdate.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            User userFromDb = toUpdate.get();
+            // Use modelMapper to update the existing entity with values from the DTO
+            modelMapper.map(userDto, userFromDb);
+
+            service.saveUser(userFromDb);
+
+            return ResponseEntity.ok(modelMapper.map(userFromDb, UserDto.class));
+        }
+    }
 
 //    @GetMapping("")
 //    @Secured("ROLE_ADMIN")

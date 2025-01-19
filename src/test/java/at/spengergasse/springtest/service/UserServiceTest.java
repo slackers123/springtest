@@ -8,6 +8,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assumptions.assumeThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,6 +21,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
+    private static final Logger log = LoggerFactory.getLogger(UserServiceTest.class);
     private @Mock UserRepository userRepository;
 
     @InjectMocks
@@ -36,9 +42,13 @@ class UserServiceTest {
                 .address(new Address("spengergasse", "wien", "1050"))
                 .build();
 
+        System.out.println(user.getId());
+
         when(userRepository.save(user)).thenReturn(user);
 
         User new_user = userService.saveUser(user);
+
+        System.out.println(new_user.getId());
 
         assertNotNull(new_user);
         verify(userRepository,times(1)).save(user);
@@ -46,6 +56,38 @@ class UserServiceTest {
         assertEquals(new_user, user);
     }
 
+    @Test
+    void testFindUsersByName() {
+        String name = "Maxim";
+
+        User user1 = User.builder()
+                .name(name)
+                .role(Role.ADMIN)
+                .nose(new Nose())
+                .email(new Email("maxim@gmail.com"))
+                .address(new Address("spengergasse", "wien", "1050"))
+                .build();
+
+        User user2 = User.builder()
+                .name(name)
+                .role(Role.ADMIN)
+                .nose(new Nose())
+                .email(new Email("maxim@gmail.com"))
+                .address(new Address("spengergasse", "wien", "1050"))
+                .build();
+
+        List<User> users =new ArrayList<User>();
+        users.add(user1);
+        users.add(user2);
+
+        when(userRepository.findByName(name)).thenReturn(users);
+
+        List<User> usersFound = userService.findUserByName(name);
+
+        assertEquals(2, usersFound.size());
+
+        assertArrayEquals(usersFound.toArray(), users.toArray());
+    }
 }
 
 /*
