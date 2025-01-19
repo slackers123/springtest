@@ -1,15 +1,12 @@
 package at.spengergasse.springtest.presentation;
 
 import at.spengergasse.springtest.domain.User;
-import at.spengergasse.springtest.presentation.assemblers.NoseModelAssembler;
 import at.spengergasse.springtest.presentation.assemblers.UserModelAssembler;
 import at.spengergasse.springtest.presentation.commands.CreateUserCommand;
-import at.spengergasse.springtest.presentation.dto.NoseDto;
 import at.spengergasse.springtest.presentation.dto.UserDto;
 import at.spengergasse.springtest.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
 import org.springframework.http.ResponseEntity;

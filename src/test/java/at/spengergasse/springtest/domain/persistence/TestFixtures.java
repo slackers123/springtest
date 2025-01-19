@@ -1,8 +1,9 @@
 package at.spengergasse.springtest.domain.persistence;
 
-import at.spengergasse.springtest.domain.*;
-
-import java.time.LocalDateTime;
+import at.spengergasse.springtest.domain.Address;
+import at.spengergasse.springtest.domain.Email;
+import at.spengergasse.springtest.domain.Role;
+import at.spengergasse.springtest.domain.User;
 
 public class TestFixtures {
     public static User severinUser() {

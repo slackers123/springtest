@@ -1,9 +1,11 @@
 package at.spengergasse.springtest.service;
 
-import at.spengergasse.springtest.domain.*;
+import at.spengergasse.springtest.domain.Address;
+import at.spengergasse.springtest.domain.Email;
+import at.spengergasse.springtest.domain.Role;
+import at.spengergasse.springtest.domain.User;
 import at.spengergasse.springtest.domain.persistence.UserRepository;
 import at.spengergasse.springtest.presentation.commands.CreateUserCommand;
-import org.h2.command.ddl.CreateUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,7 +14,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assumptions.assumeThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)

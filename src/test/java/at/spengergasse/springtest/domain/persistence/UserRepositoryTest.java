@@ -1,6 +1,7 @@
 package at.spengergasse.springtest.domain.persistence;
 
-import at.spengergasse.springtest.domain.*;
+import at.spengergasse.springtest.domain.Nose;
+import at.spengergasse.springtest.domain.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +9,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
 class UserRepositoryTest {

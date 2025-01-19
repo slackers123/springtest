@@ -2,9 +2,11 @@ package at.spengergasse.springtest.presentation.dto;
 
 import at.spengergasse.springtest.domain.Address;
 import at.spengergasse.springtest.domain.Email;
-import at.spengergasse.springtest.domain.Nose;
 import at.spengergasse.springtest.domain.Role;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
 
 
