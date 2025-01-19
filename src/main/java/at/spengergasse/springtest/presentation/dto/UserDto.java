@@ -18,5 +18,4 @@ public class UserDto extends RepresentationModel<UserDto> {
     private String name;
     private Role role;
     private Address address;
-    private Nose nose;
 }

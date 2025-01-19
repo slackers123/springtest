@@ -1,6 +1,7 @@
 package at.spengergasse.springtest.presentation.assemblers;
 
 import at.spengergasse.springtest.domain.User;
+import at.spengergasse.springtest.presentation.NoseController;
 import at.spengergasse.springtest.presentation.UserController;
 import at.spengergasse.springtest.presentation.dto.UserDto;
 import io.micrometer.common.lang.NonNullApi;
@@ -21,6 +22,10 @@ public class UserModelAssembler implements RepresentationModelAssembler<User, Us
         UserDto userDto = modelMapper.map(user, UserDto.class);
 
         userDto.add(linkTo(methodOn(UserController.class).getUser(user.getId())).withSelfRel());
+
+        if (user.getNose() != null) {
+            userDto.add(linkTo(methodOn(NoseController.class).getNoseById(user.getNose().getId())).withRel("get-nose"));
+        }
 
         return userDto;
     }

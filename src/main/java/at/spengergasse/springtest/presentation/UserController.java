@@ -1,12 +1,15 @@
 package at.spengergasse.springtest.presentation;
 
 import at.spengergasse.springtest.domain.User;
+import at.spengergasse.springtest.presentation.assemblers.NoseModelAssembler;
 import at.spengergasse.springtest.presentation.assemblers.UserModelAssembler;
 import at.spengergasse.springtest.presentation.commands.CreateUserCommand;
+import at.spengergasse.springtest.presentation.dto.NoseDto;
 import at.spengergasse.springtest.presentation.dto.UserDto;
 import at.spengergasse.springtest.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
 import org.springframework.http.ResponseEntity;
@@ -30,8 +33,7 @@ public class UserController {
     private final UserModelAssembler assembler;
 
     @GetMapping("")
-    public CollectionModel<UserDto> getAllUsers() {
-
+    public ResponseEntity<CollectionModel<UserDto>> getAllUsers() {
         List<User> userList = service.fetchAll();
 
         CollectionModel<UserDto> result = assembler.toCollectionModel(userList);
@@ -39,7 +41,7 @@ public class UserController {
         Link selfLink = linkTo(methodOn(UserController.class).getAllUsers()).withSelfRel();
         result.add(selfLink);
 
-        return result;
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("{userId}")
@@ -47,6 +49,8 @@ public class UserController {
         Optional<User> returnValue = service.findUserById(userId);
         if (returnValue.isPresent()) {
             UserDto userDto = assembler.toModel(returnValue.get());
+            UserDto dto = new UserDto();
+            dto.add(linkTo(methodOn(UserController.class).getUser(userId)).withSelfRel());
             return ResponseEntity.ok(userDto);
         }
         else {
@@ -58,8 +62,6 @@ public class UserController {
     public ResponseEntity<UserDto> createUser(@RequestBody @Valid CreateUserCommand cmd) {
         System.out.println(cmd.address().toString());
         User new_user = service.createUser(cmd);
-
-        System.out.println("new_user: " + new_user);
 
         return ResponseEntity.ok(assembler.toModel(new_user));
     }
