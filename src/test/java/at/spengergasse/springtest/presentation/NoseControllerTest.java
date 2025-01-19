@@ -59,6 +59,7 @@ public class NoseControllerTest {
         mockMvc.perform(request)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$._links.self.href").value("/api/nose/1"))
                 .andDo(print());
     }
 }
